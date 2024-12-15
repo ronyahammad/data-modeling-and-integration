@@ -1,0 +1,45 @@
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=wastemanagement 
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+    ports:
+      - "9042:9042"
+    networks:
+      - cassandra-net
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    restart: always
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+
+  basex:
+    image: basex/basexhttp:latest
+    container_name: basex
+    ports:
+      - "8984:8984" # BaseX HTTP Server port
+      - "1984:1984" # BaseX TCP port
+    networks:
+      - cassandra-net
+    volumes:
+      - basex-data:/basex/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8984 || exit 1"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+
+networks:
+  cassandra-net:
+    driver: bridge
+
+volumes:
+  cassandra-data:
+  basex-data:
