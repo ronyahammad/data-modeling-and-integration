@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Management Solutions</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="nav-bar">
+            <div class="menu">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="language">
+                <span>EN</span>
+            </div>
+            <div class="logo">
+                <img src="images/logo.png" alt="Water Management Logo">
+            </div>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Efficient Water Management Solutions</h1>
+            <p>Optimizing resources for a sustainable future in Faro, Portugal.</p>
+            <a href="#" class="btn">Learn More</a>
+        </div>
+    </section>
+    <section class="data-section">
+        <div class="buttons">
+            <button onclick="loadData('sensors')">Sensors</button>
+            <button onclick="loadData('reports')">Reports</button>
+            <button onclick="loadData('temperature')">Temperature</button>
+            <button onclick="loadData('ph')">pH Levels</button>
+            <button onclick="loadData('turbidity')">Turbidity</button>
+        </div>
+        <div class="data-display">
+            <table>
+                <thead id="table-head"></thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </section>
+    <script>
+        async function loadData(type) {
+            const urls = {
+                sensors: 'sensors.json',
+                reports: 'reports.json',
+                temperature: 'temperature.json',
+                ph: 'ph.json',
+                turbidity: 'turbidity.json',
+            };
+            const response = await fetch(urls[type]);
+            const data = await response.json();
+            const tableHead = document.getElementById('table-head');
+            const tableBody = document.getElementById('table-body');
+
+            tableHead.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (data.length > 0) {
+                const headers = Object.keys(data[0]);
+                const headerRow = `<tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>`;
+                tableHead.innerHTML = headerRow;
+
+                data.forEach(row => {
+                    const rowHtml = `<tr>${headers.map(header => `<td>${row[header]}</td>`).join('')}</tr>`;
+                    tableBody.innerHTML += rowHtml;
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="100%">No Data Available</td></tr>';
+            }
+        }
+    </script>
+</body>
+</html>

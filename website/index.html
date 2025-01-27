@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Quality Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Water Quality Management</h1>
+        <p>Monitoring data from sensors and generating reports for better resource management.</p>
+    </header>
+    <section class="buttons">
+        <button onclick="loadData('sensors')">Sensors</button>
+        <button onclick="loadData('reports')">Reports</button>
+        <button onclick="loadData('temperature')">Temperature</button>
+        <button onclick="loadData('ph')">pH Levels</button>
+        <button onclick="loadData('turbidity')">Turbidity</button>
+    </section>
+    <section class="data-display">
+        <table>
+            <thead id="table-head"></thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </section>
+    <script>
+        async function loadData(type) {
+            const urls = {
+                sensors: 'sensors.json',
+                reports: 'reports.json',
+                temperature: 'temperature.json',
+                ph: 'ph.json',
+                turbidity: 'turbidity.json',
+            };
+            const response = await fetch(urls[type]);
+            const data = await response.json();
+            const tableHead = document.getElementById('table-head');
+            const tableBody = document.getElementById('table-body');
+
+            tableHead.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            if (data.length > 0) {
+                const headers = Object.keys(data[0]);
+                const headerRow = `<tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>`;
+                tableHead.innerHTML = headerRow;
+
+                data.forEach(row => {
+                    const rowHtml = `<tr>${headers.map(header => `<td>${row[header]}</td>`).join('')}</tr>`;
+                    tableBody.innerHTML += rowHtml;
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="100%">No Data Available</td></tr>';
+            }
+        }
+    </script>
+</body>
+</html>
